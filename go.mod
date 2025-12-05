@@ -1,4 +1,4 @@
-module github.com/barahona42/swissarmy/knifego
+module github.com/barahona42/swissarmy
 
 go 1.25.5
 
