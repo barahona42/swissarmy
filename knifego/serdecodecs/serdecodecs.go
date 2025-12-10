@@ -15,7 +15,7 @@ import (
 // TimestampCodec: implements bson.Value{Encoder,Decoder} interface for serde of `*timestamppb.Timestamp`.
 type TimestampCodec struct{}
 
-// DecodeValue: value encoder.
+// EncodeValue: value encoder.
 func (codec TimestampCodec) EncodeValue(_ bson.EncodeContext, vw bson.ValueWriter, val reflect.Value) error {
 	if !val.IsValid() {
 		return bson.ValueEncoderError{
@@ -62,9 +62,13 @@ func (codec TimestampCodec) DecodeValue(_ bson.DecodeContext, vr bson.ValueReade
 
 // NewRegistry: creates a new bson registry that adds codecs defined in this package.
 func NewRegistry() *bson.Registry {
-	r := bson.NewRegistry()                       // not actually empty as docstring says. includes "default" codecs
+	r := bson.NewRegistry() // not actually empty as docstring says. includes "default" codecs
+	RegisterBSON(r)
+	return r
+}
+
+func RegisterBSON(r *bson.Registry) {
 	t := reflect.TypeOf(&timestamppb.Timestamp{}) // pointer is important to prevent copying the sync.Mutex value
 	r.RegisterTypeEncoder(t, TimestampCodec{})
 	r.RegisterTypeDecoder(t, TimestampCodec{})
-	return r
 }
